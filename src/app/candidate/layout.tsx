@@ -2,10 +2,9 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Home, Briefcase, FileText, Brain, Video, Bell, User, Menu, X, LogOut } from 'lucide-react'
+import { Home, Briefcase, FileText, Brain, Video, Menu, X, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { ThemeToggle } from '@/components/theme-toggle' 
-import { CandidateNotifications } from '@/components/candidate-notifications'
 import { AuthWrapper } from '@/components/auth-wrapper'
 import { UserButton } from '@clerk/nextjs'
 
@@ -37,7 +36,6 @@ export default function CandidateLayout({
 
           {/* Right side items */}
           <div className="flex items-center space-x-2 ml-auto">
-            <CandidateNotifications />
             <ThemeToggle />
             <UserButton 
               appearance={{

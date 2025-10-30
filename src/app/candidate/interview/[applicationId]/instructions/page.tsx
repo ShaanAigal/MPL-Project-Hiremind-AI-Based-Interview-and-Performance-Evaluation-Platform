@@ -41,7 +41,7 @@ export default function InterviewInstructionsPage({ params }: { params: { applic
                     </div>
                     <div className="p-4 bg-muted/50 rounded-lg text-sm space-y-2">
                         <h4 className="font-semibold mb-2">Interview Details</h4>
-                        <p><strong>Duration:</strong> 15 minutes (fixed)</p>
+                        <p><strong>Duration:</strong> 15 minutes</p>
                         <p><strong>Format:</strong> Video interview with an AI interviewer</p>
                         <p><strong>Questions:</strong> A mix of technical and behavioral questions</p>
                     </div>

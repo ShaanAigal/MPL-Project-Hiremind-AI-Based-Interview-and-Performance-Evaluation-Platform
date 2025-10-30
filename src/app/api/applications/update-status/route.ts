@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Application from '@/models/Application';
-import Notification from '@/models/Notification';
-import Job from '@/models/Job';
+import { sendApplicationStatusEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
     await dbConnect();
@@ -23,28 +22,45 @@ export async function POST(request: NextRequest) {
         application.status = status;
         await application.save();
 
-        // Create a notification for the candidate
-        let message = '';
-        if (status === 'Selected') {
-            message = `Congratulations! You have been selected for the role of ${(application.jobId as any).title} at ${(application.jobId as any).company}.`;
-        } else if (status === 'Rejected') {
-            message = `Thank you for your interest in the ${ (application.jobId as any).title} role. We have decided not to move forward with your application at this time.`;
-        }
+        // Send email notification based on status
+        if (['Approved', 'Selected', 'Rejected'].includes(status)) {
+            const emailStatus = status === 'Selected' ? 'selected' : 
+                              status === 'Rejected' ? 'rejected' : 'approved';
+            
+            const job = application.jobId as any;
+            if (!job?.title || !job?.company) {
+                console.error('Missing job details:', { job, applicationId });
+                throw new Error('Missing required job details for email notification');
+            }
 
-        if (message) {
-            await Notification.create({
-                candidateEmail: application.candidateEmail,
-                message: message,
-                applicationId: application._id,
+            const emailResult = await sendApplicationStatusEmail({
+                to: application.candidateEmail,
+                jobTitle: job.title,
+                companyName: job.company,
+                candidateName: application.candidateName,
+                status: emailStatus as 'approved' | 'selected' | 'rejected'
             });
-            console.log(`Notification created for ${application.candidateEmail}: ${message}`);
+
+            if (!emailResult.success) {
+                console.error('Failed to send email notification:', emailResult.error);
+                throw new Error('Failed to send email notification');
+            }
         }
 
         // Return updated application with populated jobId
         const updatedApplication = await Application.findById(applicationId).populate('jobId');
 
-        return NextResponse.json({ success: true, data: updatedApplication, message: status === 'Selected' || status === 'Rejected' ? 'Status updated successfully and notification sent' : 'Status updated successfully' });
+        const message = ['Approved', 'Selected', 'Rejected'].includes(status)
+            ? 'Status updated successfully and email notification sent'
+            : 'Status updated successfully';
+
+        return NextResponse.json({ 
+            success: true, 
+            data: updatedApplication, 
+            message 
+        });
     } catch (error) {
+        console.error('Error updating application status:', error);
         const err = error as Error;
         return NextResponse.json({ success: false, error: err.message }, { status: 500 });
     }

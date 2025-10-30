@@ -303,7 +303,7 @@ export default function RealInterviewSetupPage({ params }: { params: { applicati
                 <div className="p-4 bg-muted/50 rounded-lg">
                     <h4 className="font-semibold mb-2">Interview Details</h4>
                     <div className="space-y-1 text-sm text-muted-foreground">
-                        <p><strong>Duration:</strong> 15 minutes (fixed)</p>
+                        <p><strong>Duration:</strong> 15 minutes</p>
                         <p><strong>Format:</strong> Video interview with AI interviewer</p>
                         <p><strong>Questions:</strong> Mix of technical and behavioral questions</p>
                     </div>

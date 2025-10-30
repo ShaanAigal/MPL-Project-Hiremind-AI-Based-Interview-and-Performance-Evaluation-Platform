@@ -141,7 +141,7 @@ export default function ApplicantDetailsPage({ params }: { params: { jobId: stri
                                 <tr>
                                     <th className="p-4 text-left font-medium">Sr No</th>
                                     <th className="p-4 text-left font-medium">Candidate</th>
-                                    <th className="p-4 text-left font-medium">Overall Score</th>
+                                    <th className="p-4 text-left font-medium">ATS Score</th>
                                     <th className="p-4 text-left font-medium">Applied Date</th>
                                     <th className="p-4 text-left font-medium">Status</th>
                                     <th className="p-4 text-left font-medium">Actions</th>

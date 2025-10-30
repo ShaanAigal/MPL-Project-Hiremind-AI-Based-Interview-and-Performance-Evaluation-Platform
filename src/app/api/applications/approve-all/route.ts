@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Application from '@/models/Application';
-import Notification from '@/models/Notification'; // Import Notification model
+import { sendApplicationStatusEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
     await dbConnect();
@@ -23,13 +23,16 @@ export async function POST(request: NextRequest) {
                 { $set: { status: 'Interviewing' } }
             );
 
-            // Create notifications for each updated application
-            const notifications = applicationsToUpdate.map(app => ({
-                candidateEmail: app.candidateEmail,
-                message: `Your application for "${(app.jobId as any).title}" has moved to the Interviewing stage!`,
-                applicationId: app._id,
-            }));
-            await Notification.insertMany(notifications);
+            // Send email notifications for each updated application
+            for (const app of applicationsToUpdate) {
+                await sendApplicationStatusEmail({
+                    to: app.candidateEmail,
+                    jobTitle: (app.jobId as any).title,
+                    companyName: (app.jobId as any).company,
+                    candidateName: app.candidateName,
+                    status: 'approved'
+                });
+            }
         }
 
         return NextResponse.json({ success: true, message: 'All approved candidates moved to interviewing stage.' });

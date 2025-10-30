@@ -241,13 +241,13 @@ export default function RecruiterLayout({
               {/* Bottom section */}
               <div className="!mt-auto pt-4 border-t">
                 <Link href="/recruiter/settings">
-                  <Button 
+                  {/* <Button 
                     variant="ghost" 
                     className="w-full justify-start"
                   >
                     <Settings className="h-4 w-4 mr-3" />
                     Settings
-                  </Button>
+                  </Button> */}
                 </Link>
               </div>
             </nav>
